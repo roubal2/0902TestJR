@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Autoservis</title>
+</head>
+<style>
+    .card {
+        border: 1px solid black;
+        padding: 10px;
+        margin: 10px;
+    }
+</style>
+<body>
+
+    <h1>IHN autoservis</h1>
+    <div id="cars-container"></div>
+
+    <form id="add-car-form">
+        <label for="brand">Brand:</label>
+        <input type="text", id="brand", name="brand">
+        <br><br>
+        <label for="model">Model:</label>
+        <input type="text", id="model", name="model">
+        <br><br>
+        <label for="year">Year:</label>
+        <input type="text", id="year", name="year">
+        <br><br>
+        <label for="kilometers">Kilometers:</label>
+        <input type="text", id="kilometers", name="kilometers">
+        <br><br>
+        <button type="submit">Add car</button>
+    </form>
+
+    <script>
+        class Car {
+            constructor(brand, model, year, kilometers){
+                this.brand = brand;
+                this.model = model;
+                this.year = year;
+                this.kilometers = kilometers;
+            }
+
+            getID() { 
+                return this.brand + this.model + this.year + this.kilometers;
+            }
+        }
+
+        class AutoServis {
+            constructor (name, cars){
+                this.name = name;
+                this.cars = cars;
+            }
+
+            getCars() {
+                return this.cars;
+            }
+
+            addCar(car) {
+                this.cars.push(car);
+            }
+
+            removeCar(car) {
+                const index = this.cars.indexOf(car);
+                if(index > -1){
+                    this.cars.splice(index, 1);
+                }
+            }
+        }
+
+        let autoServis;
+        if(localStorage.getItem("autoServis") == null){
+            autoServis = JSON.parse(localStorage.getItem("autoServis"));
+            autoServis = new AutoServis(autoServis.name, autoservis.cars.map(car => new Car(car.brand, car.model, car.year, car.kilometers)));
+        } else {
+            const auto1 = new Car("Ford", "Fiesta", 2010, 40000);
+            const auto2 = new Car("honda", "civic", 2015, 80000);
+            const auto3 = new Car("škoda", "fabia", 2018, 60000);
+            const auto4 = new Car("bmw", "x5", 2019, 19000);
+
+            const cars = [auto1, auto2, auto3, auto4];
+            AutoServis = new AutoServis("IHN", cars);
+        }
+
+        localStorage.setItem("autoServis", JSON.stringify(autoServis));
+
+        const carContainer = document.getElementById("cars-container");
+        for(const car of autoServis.getCars()){
+            const carDiv = `
+            <div class="card">
+                <p>Year: ${car.year}</p>
+                <p>Brand: ${car.brand}</p>
+                <p>Model: ${car.model}</p>
+                <p>Kilometers: ${car.kilometers}</p>
+            </div>
+            `;
+            carContainer.innerHTML += carDiv;
+        }
+
+        const form = document.getElementById("add-car-form");
+
+        form.addEventListener("submit", (event) => {
+            event.preventDefault();
+            const brand = form.brand.value;
+            const model = form.model.value;
+            const year = form.year.value;
+            const kilometers = form.kilometers.value;
+
+            const car = new Car(brand, model, year, kilometers);
+            autoServis.addCar(car);
+            renderCars();
+        });
+    </script>
+</body>
+</html>
